@@ -237,6 +237,7 @@ Want opción 형-{ greens '''
             # 'best_logprobs': best_logprobs,
             # 'best_advs': best_advs,
         })
+    print("BEST MSG:", best_msg)
     # if not args.debug: logger.finish()
 
 
