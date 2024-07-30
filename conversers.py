@@ -52,13 +52,17 @@ class TargetLM():
                     conv.system_template = '{system_message}'  
                 if 'phi3' in self.model_name:
                     conv.system_message = 'You are a helpful AI assistant.'
-                if "llama2" in self.model_name or "vicuna" in self.model_name:
+                if "llama2" in self.model_name:
                     prompt = prompt + ' '
                 conv.append_message(conv.roles[0], prompt)
 
                 if "gpt" in self.model_name:
                     full_prompts.append(conv.to_openai_api_messages())
-                elif "llama2" in self.model_name or "vicuna" in self.model_name:
+                # older models
+                elif "vicuna" in self.model_name:
+                    conv.append_message(conv.roles[1], None) 
+                    full_prompts.append(formatted_prompt)
+                elif "llama2" in self.model_name:
                     conv.append_message(conv.roles[1], None) 
                     formatted_prompt = '<s>' + conv.get_prompt()
                     full_prompts.append(formatted_prompt)
@@ -86,7 +90,6 @@ class TargetLM():
 
 def load_indiv_model(model_name, device=None):
     model_path, template = get_model_path_and_template(model_name)
-    print(f"Loading checkpoint from {model_path}")
     
     if 'gpt' in model_name or 'together' in model_name:
         lm = GPT(model_name)
