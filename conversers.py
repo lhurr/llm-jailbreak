@@ -153,7 +153,7 @@ def get_model_path_and_template(model_name):
             "path":LLAMA_7B_PATH,
             "template":"llama-2"
         },
-        "llama2-7b":{
+        "together-llama2-7b":{
             "path":LLAMA_7B_PATH,
             "template":"llama-2"
         },

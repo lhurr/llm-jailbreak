@@ -51,4 +51,3 @@ def conv_template(template_name):
     if template.name == 'llama-2':
         template.sep2 = template.sep2.strip()
     return template
-
