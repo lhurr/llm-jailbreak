@@ -134,10 +134,25 @@ class HuggingFace:
         if 'llama2' in self.model_name.lower():
             logprobs_tokens = logprobs_tokens[1:]  # ignore the first special token (id=29871)
         print(len(logprobs_tokens), (batch_size))
-        logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
-                         for i_vocab in range(vocab_size)} 
-                         for i_out_token in range(len(logprobs_tokens))
-                        ] for i_batch in range(batch_size)]
+        # logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
+        #                  for i_vocab in range(vocab_size)} 
+        #                  for i_out_token in range(len(logprobs_tokens))
+        #                 ] for i_batch in range(batch_size)]
+        logprob_dicts = []
+        for i_batch in range(batch_size):
+            batch_logprobs = []
+            # Iterate over each output token
+            for i_out_token, logprobs in enumerate(logprobs_tokens):
+                token_logprobs = {}
+                vocab_size = logprobs.shape[-1]
+                # Iterate over each vocabulary item
+                for i_vocab in range(vocab_size):
+                    # Safeguard to avoid accessing out-of-bounds
+                    if i_vocab < vocab_size:
+                        token = self.pos_to_token_dict.get(i_vocab, f"<unk_{i_vocab}>")
+                        token_logprobs[token] = logprobs[i_batch][i_vocab]
+                batch_logprobs.append(token_logprobs)
+            logprob_dicts.append(batch_logprobs)
 
         outputs = [{'text': generated_texts[i_batch],
                     'logprobs': logprob_dicts[i_batch],
