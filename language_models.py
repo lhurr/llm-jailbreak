@@ -20,7 +20,7 @@ class GPT:
     API_TOP_LOGPROBS = 20
 
     def __init__(self, model_name):
-        self.model_name = model_name
+        self.model_name = model_name.replace('together-', '')
         if 'gpt' in model_name:
             self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         elif 'together' in model_name:
