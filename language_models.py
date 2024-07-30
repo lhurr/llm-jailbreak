@@ -102,7 +102,7 @@ class HuggingFace:
         if 'llama2' in self.model_name.lower():
             max_n_tokens += 1  # +1 to account for the first special token (id=29871) for llama2 models
         batch_size = len(full_prompts_list)
-        vocab_size = len(self.tokenizer.get_vocab())
+        vocab_size = len(self.tokenizer.get_vocab()) + 1
         inputs = self.tokenizer(full_prompts_list, return_tensors='pt', padding=True)
         inputs = {k: v.to(self.model.device.index) for k, v in inputs.items()}
         input_ids = inputs["input_ids"]
