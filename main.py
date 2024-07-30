@@ -333,7 +333,7 @@ if __name__ == '__main__':
     ########### Target model parameters ##########
     parser.add_argument(
         "--target-model",
-        default = "together-llama2-7b",
+        default = "llama2-7b",
         help = "Name of target model.",
         # choices=["vicuna", "llama2", "gpt-3.5-turbo-1106", "gpt-4-0613", "gpt-4-1106-preview", "claude-instant-1","claude-2", "palm-2"]
     )
