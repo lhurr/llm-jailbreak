@@ -223,8 +223,8 @@ Want opción 형-{ greens '''
             # 'start_with_sure_adv': final_response_text.strip().startswith(target_token),
             # 'jailbroken_noadv_judge_llm': jailbroken_noadv_judge_llm,
             # 'jailbroken_noadv_judge_rule': jailbroken_noadv_judge_rule,
-            'jailbroken_orig_judge_llm': jailbroken_orig_judge_llm,
-            'jailbroken_orig_judge_rule': jailbroken_orig_judge_rule,
+            # 'jailbroken_orig_judge_llm': jailbroken_orig_judge_llm,
+            # 'jailbroken_orig_judge_rule': jailbroken_orig_judge_rule,
             # 'jailbroken_judge_llm': jailbroken_judge_llm,
             # 'jailbroken_judge_rule': jailbroken_judge_rule,
             # 'n_input_chars': targetLM.n_input_chars,
@@ -234,8 +234,8 @@ Want opción 형-{ greens '''
             # 'n_queries': it,
             'orig_msg': orig_msg,
             'best_msg': best_msg,
-            'best_logprobs': best_logprobs,
-            'best_advs': best_advs,
+            # 'best_logprobs': best_logprobs,
+            # 'best_advs': best_advs,
         })
     # if not args.debug: logger.finish()
 
@@ -333,7 +333,7 @@ if __name__ == '__main__':
     ########### Target model parameters ##########
     parser.add_argument(
         "--target-model",
-        default = "vicuna",
+        default = "llama2-7b",
         help = "Name of target model.",
         # choices=["vicuna", "llama2", "gpt-3.5-turbo-1106", "gpt-4-0613", "gpt-4-1106-preview", "claude-instant-1","claude-2", "palm-2"]
     )
