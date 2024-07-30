@@ -132,8 +132,8 @@ class HuggingFace:
         logprobs_tokens = [torch.nn.functional.log_softmax(output.scores[i_out_token], dim=-1).cpu().numpy() 
                            for i_out_token in range(len(output.scores))]
         if 'llama2' in self.model_name.lower():
-            logprobs_tokens = logprobs_tokens[:]  # ignore the first special token (id=29871)
-
+            logprobs_tokens = logprobs_tokens[1:]  # ignore the first special token (id=29871)
+        print(len(logprobs_tokens), (batch_size))
         logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
                          for i_vocab in range(vocab_size)} 
                          for i_out_token in range(len(logprobs_tokens))
