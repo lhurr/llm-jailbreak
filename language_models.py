@@ -20,14 +20,13 @@ class GPT:
     API_TOP_LOGPROBS = 20
 
     def __init__(self, model_name):
-        self.model_name = model_name.replace('together-', '')
-        if 'gpt' in model_name:
-            self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        elif 'together' in model_name:
-            TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
-            self.client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz')
-        else:
-            raise ValueError(f"Unknown model name: {model_name}")
+        self.model_name = 'meta-llama/Llama-2-7b-chat-hf'
+
+        # elif 'together' in model_name:
+        TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
+        self.client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz')
+        # else:
+        #     raise ValueError(f"Unknown model name: {model_name}")
         self.tokenizer = tiktoken.encoding_for_model("gpt-4")  # same as for gpt-3.5     
         self.tokenizer.vocab_size = 100256  # note values from 100256 to 100275 (tokenizer.max_token_value) throw an error   
 
