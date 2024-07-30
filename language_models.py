@@ -102,7 +102,8 @@ class HuggingFace:
         if 'llama2' in self.model_name.lower():
             max_n_tokens += 1  # +1 to account for the first special token (id=29871) for llama2 models
         batch_size = len(full_prompts_list)
-        vocab_size = len(self.tokenizer.get_vocab()) + 1
+        vocab_size = len(self.tokenizer.get_vocab()) 
+        print(vocab_size)
         inputs = self.tokenizer(full_prompts_list, return_tensors='pt', padding=True)
         inputs = {k: v.to(self.model.device.index) for k, v in inputs.items()}
         input_ids = inputs["input_ids"]
@@ -131,7 +132,7 @@ class HuggingFace:
         logprobs_tokens = [torch.nn.functional.log_softmax(output.scores[i_out_token], dim=-1).cpu().numpy() 
                            for i_out_token in range(len(output.scores))]
         if 'llama2' in self.model_name.lower():
-            logprobs_tokens = logprobs_tokens[1:]  # ignore the first special token (id=29871)
+            logprobs_tokens = logprobs_tokens[:]  # ignore the first special token (id=29871)
 
         logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
                          for i_vocab in range(vocab_size)} 
