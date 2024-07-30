@@ -278,14 +278,14 @@ if __name__ == '__main__':
     parser.add_argument(
         "--prompt-template",
         type = str,
-        default = "icl_one_shot",
+        default = "refined_best",
         help = "Template for the universal manual prompt.",
     )
     ########### RS parameters ##########
     parser.add_argument(
         "--n-iterations",
         type = int,
-        default = 5,
+        default = 500,
         help = "Number of iterations to run the attack."
     )
     parser.add_argument(
@@ -325,7 +325,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--n-restarts",
         type = int,
-        default = 1,
+        default = 2,
         help = "Number of random restarts to amplify the attack success rate."
     )
     ##################################################
@@ -340,7 +340,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--target-max-n-tokens",
         type = int,
-        default = 150,
+        default = 256,
         help = "Maximum number of generated tokens for the target."
     )
     ##################################################
