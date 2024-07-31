@@ -57,10 +57,10 @@ For the code used to obtain the 1st place in the SatML'24 Trojan Detection Compe
 
 
 ## Citation
-If you find this work useful in your own research, please consider citing it: 
+If you find this work useful in your own research, please consider citing it:
 ```bibtex
 @article{andriushchenko2024jailbreaking,
-      title={Jailbreaking Leading Safety-Aligned LLMs with Simple Adaptive Attacks}, 
+      title={Jailbreaking Leading Safety-Aligned LLMs with Simple Adaptive Attacks},
       author={Andriushchenko, Maksym and Croce, Francesco and Flammarion, Nicolas},
       journal={arXiv preprint arXiv:2404.02151},
       year={2024}

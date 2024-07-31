@@ -28,8 +28,8 @@ class GPT:
             self.client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz')
         else:
             raise ValueError(f"Unknown model name: {model_name}")
-        self.tokenizer = tiktoken.encoding_for_model("gpt-4")  # same as for gpt-3.5     
-        self.tokenizer.vocab_size = 100256  # note values from 100256 to 100275 (tokenizer.max_token_value) throw an error   
+        self.tokenizer = tiktoken.encoding_for_model("gpt-4")  # same as for gpt-3.5
+        self.tokenizer.vocab_size = 100256  # note values from 100256 to 100275 (tokenizer.max_token_value) throw an error
 
     def generate(
         self, convs: List[List[Dict]], max_n_tokens: int, temperature: float, top_p: float
@@ -60,8 +60,8 @@ class GPT:
                         seed=0,
                     )
                     response_logprobs = [
-                        dict((response.choices[0].logprobs.content[i_token].top_logprobs[i_top_logprob].token, 
-                                response.choices[0].logprobs.content[i_token].top_logprobs[i_top_logprob].logprob) 
+                        dict((response.choices[0].logprobs.content[i_token].top_logprobs[i_top_logprob].token,
+                                response.choices[0].logprobs.content[i_token].top_logprobs[i_top_logprob].logprob)
                                 for i_top_logprob in range(self.API_TOP_LOGPROBS)
                         )
                         for i_token in range(len(response.choices[0].logprobs.content))
@@ -84,7 +84,7 @@ class GPT:
 class HuggingFace:
     def __init__(self,model_name, model, tokenizer):
         self.model_name = model_name
-        self.model = model 
+        self.model = model
         self.tokenizer = tokenizer
         # substitute '▁Sure' with 'Sure' (note: can lead to collisions for some target_tokens)
         self.pos_to_token_dict = {v: k.replace('▁', ' ') for k, v in self.tokenizer.get_vocab().items()}
@@ -94,15 +94,15 @@ class HuggingFace:
             self.eos_token_ids.append(self.tokenizer.convert_tokens_to_ids("<|eot_id|>"))
         self.pad_token_id = self.tokenizer.pad_token_id
 
-    def generate(self, 
+    def generate(self,
                  full_prompts_list: List[str],
-                 max_n_tokens: int, 
+                 max_n_tokens: int,
                  temperature: float,
                  top_p: float = 1.0) -> List[Dict]:
         if 'llama2' in self.model_name.lower():
             max_n_tokens += 1  # +1 to account for the first special token (id=29871) for llama2 models
         batch_size = len(full_prompts_list)
-        vocab_size = len(self.tokenizer.get_vocab()) 
+        vocab_size = len(self.tokenizer.get_vocab())
         print(vocab_size)
         inputs = self.tokenizer(full_prompts_list, return_tensors='pt', padding=True)
         inputs = {k: v.to(self.model.device.index) for k, v in inputs.items()}
@@ -111,7 +111,7 @@ class HuggingFace:
         # Batch generation
         output = self.model.generate(
             **inputs,
-            max_new_tokens=max_n_tokens,  
+            max_new_tokens=max_n_tokens,
             do_sample=False if temperature == 0 else True,
             temperature=None if temperature == 0 else temperature,
             eos_token_id=self.eos_token_ids,
@@ -123,36 +123,40 @@ class HuggingFace:
         output_ids = output.sequences
         # If the model is not an encoder-decoder type, slice off the input tokens
         if not self.model.config.is_encoder_decoder:
-            output_ids = output_ids[:, input_ids.shape[1]:]  
+            output_ids = output_ids[:, input_ids.shape[1]:]
         if 'llama2' in self.model_name.lower():
             output_ids = output_ids[:, 1:]  # ignore the first special token (id=29871)
 
         generated_texts = self.tokenizer.batch_decode(output_ids)
         # output.scores: n_output_tokens x batch_size x vocab_size (can be counter-intuitive that batch_size doesn't go first)
-        logprobs_tokens = [torch.nn.functional.log_softmax(output.scores[i_out_token], dim=-1).cpu().numpy() 
+        logprobs_tokens = [torch.nn.functional.log_softmax(output.scores[i_out_token], dim=-1).cpu().numpy()
                            for i_out_token in range(len(output.scores))]
         if 'llama2' in self.model_name.lower():
             logprobs_tokens = logprobs_tokens[1:]  # ignore the first special token (id=29871)
         print(len(logprobs_tokens), (batch_size))
         # logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
-        #                  for i_vocab in range(vocab_size)} 
+        #                  for i_vocab in range(vocab_size)}
         #                  for i_out_token in range(len(logprobs_tokens))
         #                 ] for i_batch in range(batch_size)]
-        logprob_dicts = []
-        for i_batch in range(batch_size):
-            batch_logprobs = []
-            # Iterate over each output token
-            for i_out_token, logprobs in enumerate(logprobs_tokens):
-                token_logprobs = {}
-                vocab_size = logprobs.shape[-1]
-                # Iterate over each vocabulary item
-                for i_vocab in range(vocab_size):
-                    # Safeguard to avoid accessing out-of-bounds
-                    if i_vocab < vocab_size:
-                        token = self.pos_to_token_dict.get(i_vocab, f"<unk_{i_vocab}>")
-                        token_logprobs[token] = logprobs[i_batch][i_vocab]
-                batch_logprobs.append(token_logprobs)
-            logprob_dicts.append(batch_logprobs)
+        # logprob_dicts = []
+        # for i_batch in range(batch_size):
+        #     batch_logprobs = []
+        #     # Iterate over each output token
+        #     for i_out_token, logprobs in enumerate(logprobs_tokens):
+        #         token_logprobs = {}
+        #         vocab_size = logprobs.shape[-1]
+        #         # Iterate over each vocabulary item
+        #         for i_vocab in range(vocab_size):
+        #             # Safeguard to avoid accessing out-of-bounds
+        #             if i_vocab < vocab_size:
+        #                 token = self.pos_to_token_dict.get(i_vocab, f"<unk_{i_vocab}>")
+        #                 token_logprobs[token] = logprobs[i_batch][i_vocab]
+        #         batch_logprobs.append(token_logprobs)
+        #     logprob_dicts.append(batch_logprobs)
+        logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
+                    for i_vocab in range(vocab_size)}
+                   for i_out_token in range(len(output_ids[i_batch]))  # Use length of output_ids per batch
+                   ] for i_batch in range(batch_size)]
 
         outputs = [{'text': generated_texts[i_batch],
                     'logprobs': logprob_dicts[i_batch],
@@ -170,4 +174,3 @@ class HuggingFace:
 
         return outputs
 
-    
