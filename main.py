@@ -239,7 +239,10 @@ Want opción 형-{ greens '''
             # 'best_advs': best_advs,
         })
     print("BEST MSG:", best_msg)
-    print('early', msg_early_stop)
+    if 'msg_early_stop' in locals():
+        print('Early', msg_early_stop  )
+    else:
+        print("No Early Stop")
     # if not args.debug: logger.finish()
 
 
