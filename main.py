@@ -12,6 +12,7 @@ from language_models import GPT
 from prompts import get_universal_manual_prompt
 from conversers import load_target_model
 from utils import insert_adv_string, schedule_n_to_change_fixed, schedule_n_to_change_prob, extract_logprob, early_stopping_condition
+import json
 
 def main(args):
     random.seed(args.seed)
@@ -214,7 +215,7 @@ Want opción 형-{ greens '''
         #     import ipdb;ipdb.set_trace()
 
     # if not args.debug:
-    print({
+    print(json.dumps({
             'noadv_response_text': noadv_response_text,
             'orig_response_text': orig_response_text,
             'final_response_text': final_response_text,
@@ -237,12 +238,12 @@ Want opción 형-{ greens '''
             'best_msg': best_msg,
             # 'best_logprobs': best_logprobs,
             # 'best_advs': best_advs,
-        })
-    print("BEST MSG:", best_msg)
-    if 'msg_early_stop' in locals():
-        print('Early', msg_early_stop  )
-    else:
-        print("No Early Stop")
+        }))
+    # print("BEST MSG:", best_msg)
+    # if 'msg_early_stop' in locals():
+    #     print('Early', msg_early_stop  )
+    # else:
+    #     print("No Early Stop")
     # if not args.debug: logger.finish()
 
 
