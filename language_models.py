@@ -134,6 +134,10 @@ class HuggingFace:
         if 'llama2' in self.model_name.lower():
             logprobs_tokens = logprobs_tokens[1:]  # ignore the first special token (id=29871)
         print(len(logprobs_tokens), (batch_size))
+        logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
+                    for i_vocab in range(min(vocab_size, len(logprobs_tokens)))}  # Handle potential mismatch
+                   for i_out_token in range(len(output_ids[i_batch]))]
+                  for i_batch in range(batch_size)]
         # logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
         #                  for i_vocab in range(vocab_size)}
         #                  for i_out_token in range(len(logprobs_tokens))
@@ -153,10 +157,10 @@ class HuggingFace:
         #                 token_logprobs[token] = logprobs[i_batch][i_vocab]
         #         batch_logprobs.append(token_logprobs)
         #     logprob_dicts.append(batch_logprobs)
-        logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
-                    for i_vocab in range(vocab_size)}
-                   for i_out_token in range(len(output_ids[i_batch]))  # Use length of output_ids per batch
-                   ] for i_batch in range(batch_size)]
+        # logprob_dicts = [[{self.pos_to_token_dict[i_vocab]: logprobs_tokens[i_out_token][i_batch][i_vocab]
+        #             for i_vocab in range(vocab_size)}
+        #            for i_out_token in range(len(output_ids[i_batch]))  # Use length of output_ids per batch
+        #            ] for i_batch in range(batch_size)]
 
         outputs = [{'text': generated_texts[i_batch],
                     'logprobs': logprob_dicts[i_batch],
